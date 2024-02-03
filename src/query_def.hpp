@@ -13,12 +13,14 @@ namespace query::parser {
     using x3::lexeme;
     using ascii::char_;
 
+    using select_type = x3::rule<class select_id, ast::select>;
+
     constexpr x3::rule<class select_columns_id, std::vector<std::string>> select_columns = "select_columns";
     constexpr x3::rule<class select_table_id, std::string> select_table = "select_table";
     constexpr select_type select = "select";
     constexpr query_type query = "query";
 
-    auto const identifier = lexeme[+(char_ - x3::char_(" ,;"))];
+    auto const identifier = lexeme[+(char_ - char_(" ,;"))];
 
     auto const select_columns_def = identifier % ',';
     auto const select_table_def = identifier;
