@@ -8,11 +8,9 @@ namespace query {
     namespace x3 = boost::spirit::x3;
 
     namespace parser {
-
-        using query_type = x3::rule<class query_id, ast::query>;
-        BOOST_SPIRIT_DECLARE(query_type)
+        using QueriesRule = x3::rule<class queries_id, ast::Queries>;
+        BOOST_SPIRIT_DECLARE(QueriesRule)
     }
 
-    parser::query_type const& query();
-    // parser::select_type const& select();
+    parser::QueriesRule const& queries();
 }

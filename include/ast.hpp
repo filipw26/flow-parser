@@ -5,12 +5,14 @@
 #include <variant>
 
 namespace query::ast {
+    using ColumnsType = std::vector<std::string>;
 
-    struct select {
-        std::vector<std::string> columns;
+    struct Select {
+        ColumnsType columns;
         std::string table;
     };
 
-    using query = std::variant<select>;
+    using Query = std::variant<Select>;
+    using Queries = std::vector<Query>;
 
 }

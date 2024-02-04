@@ -13,31 +13,40 @@ namespace query::parser {
     using x3::lexeme;
     using ascii::char_;
 
-    using select_type = x3::rule<class select_id, ast::select>;
+    using QueryRule = x3::rule<class query_id, ast::Query>;
+    using SelectRule = x3::rule<class select_id, ast::Select>;
 
-    constexpr x3::rule<class select_columns_id, std::vector<std::string>> select_columns = "select_columns";
+    constexpr x3::rule<class select_columns_id, ast::ColumnsType> select_columns = "select_columns";
     constexpr x3::rule<class select_table_id, std::string> select_table = "select_table";
-    constexpr select_type select = "select";
-    constexpr query_type query = "query";
+    constexpr SelectRule select = "select";
+    constexpr QueryRule query = "query";
+    constexpr QueriesRule queries = "queries";
 
-    auto const identifier = lexeme[+(char_ - char_(" ,;"))];
+    constexpr auto kw = [](char const* keyword) {
+        return x3::no_case[lit(keyword)];
+    };
 
-    auto const select_columns_def = identifier % ',';
-    auto const select_table_def = identifier;
+    // General
+    constexpr auto identifier = lexeme[x3::alpha >> *x3::alnum];
+    constexpr auto identifierList = identifier % ',';
 
-    constexpr auto select_def = lit("select") >> select_columns >> lit("from") >> select_table >> lit(";");
+    // Select
+    constexpr auto select_columns_def = ascii::lit('*') | identifierList;
+    constexpr auto select_table_def = identifier;
 
-    constexpr auto query_def = select;
+    constexpr auto select_def =
+        kw("select") >> select_columns >>
+        kw("from") >> select_table;
 
-    BOOST_SPIRIT_DEFINE(query, select, select_columns, select_table);
+    // Query
+    constexpr auto query_def = select > lit(";");
+    constexpr auto queries_def = *query;
+
+    BOOST_SPIRIT_DEFINE(queries, query, select, select_columns, select_table);
 }
 
 namespace query {
-    extern parser::query_type const& query() {
-        return parser::query;
+    extern parser::QueriesRule const& queries() {
+        return parser::queries;
     }
-
-    // parser::select_type const& select() {
-    //     return parser::select;
-    // }
 }
