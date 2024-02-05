@@ -35,6 +35,7 @@ add_executable(
         src/query.cpp
         src/parser.cpp
         test/parser-select-test.cpp
+        test/parser-test.cpp
 )
 target_link_libraries(
         parser_test
