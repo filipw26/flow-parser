@@ -1,5 +1,10 @@
 #include "parser.hpp"
 
+#include <iostream>
+
+#include "query.hpp"
+#include "error_handler.hpp"
+
 #include <boost/spirit/home/x3.hpp>
 
 Parser::Result Parser::parse(std::string_view const input) noexcept {
@@ -8,10 +13,18 @@ Parser::Result Parser::parse(std::string_view const input) noexcept {
 
     Queries queries{};
 
-    auto iter = input.cbegin();
+    using x3::with;
+    using x3::error_handler_tag;
+    using error_handler_type = x3::error_handler<std::string_view::const_iterator>;
 
-    if(auto const end = input.cend();
-        phrase_parse(iter, end, query::queries(), space, queries) && iter == end) {
+    auto iter = input.cbegin();
+    auto const end = input.cend();
+
+    error_handler_type error_handler(iter, end, std::cerr);
+
+    auto const parser = with<error_handler_tag>(std::ref(error_handler))[query::queries()];
+
+    if(phrase_parse(iter, end, parser, space, queries) && iter == end) {
 
         return queries;
     }
