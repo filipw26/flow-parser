@@ -3,7 +3,6 @@
 #include <expected>
 
 #include "ast.hpp"
-#include "query.hpp"
 
 class Parser {
     using Queries = query::ast::Queries;

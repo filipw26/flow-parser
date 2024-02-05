@@ -6,7 +6,7 @@
 int main() {
     namespace x3 = boost::spirit::x3;
 
-    std::string const input{"select abc , bcd from tab;"};
+    std::string const input{"select name from person;"};
 
     if (auto const result = Parser::parse(input)) {
         fmt::println("Parsed {} queries", result.value().size());
